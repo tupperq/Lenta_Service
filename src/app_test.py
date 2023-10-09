@@ -37,7 +37,7 @@ def get_stores():
     if resp.status_code != 200:
         _logger.warning("Could not get stores list")
         return []
-    return resp.json()["data"]
+    return resp.json()
 
 
 def get_categories():
@@ -65,7 +65,7 @@ def get_sales(store=None, sku=None):
 
 
 def main(today=date.today()):
-    forecast_dates = [today + timedelta(days=d) for d in range(1, 14)]
+    forecast_dates = [today + timedelta(days=d) for d in range(1, 15)]
     forecast_dates_str = [el.strftime("%Y-%m-%d") for el in forecast_dates]
     categs_info = get_categories()
 
@@ -81,25 +81,22 @@ def main(today=date.today()):
                 print(f"Warning: No sales data for item {item.get('sku')}, store {store['store']}")
                 continue
 
-            print(sales)
-            print(item_info)
-            print(store)
-            # print(f'Магазин: {store}') # Принт данных из базы по магазин
-            # print(f'Продажи: {sales_dict}') Принт данных из базы по продажам
-            
-            # print(f'Айтемы: {item_info}') Принт данных из базы по позицияи
+
+            print(f'Магазин: {store}') # Принт данных из базы по магазин
+            print(f'Продажи: {sales}')
+            print(f'Айтемы: {item_info}')
 
             prediction = forecast(sales=sales, item_info=item_info, store_info=store)
 
             result.append({
-                "store": store["store"],
-                "sku": item["sku"],
+                "store": store['store'],
+                "sku": item_info['sku'],
                 "forecast_date": today.strftime("%Y-%m-%d"),
                 "sales_units": [
                     {"date": date, "target": target} for date, target in zip(forecast_dates_str, prediction)
                     ]
                 })
-        
+            print(result)
         requests.post(get_address(URL_FORECAST), json={"data": result})
 
 
