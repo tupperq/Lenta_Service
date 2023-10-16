@@ -16,18 +16,17 @@ def forecast(sales: dict, item_info: dict, store_info: dict) -> list:
     item_info = pd.DataFrame(item_info, index = [0])
     store_info = pd.DataFrame(store_info, index = [0])
 
-    a = store_info['store'].values[0]
-    b = item_info['sku'].values[0]
-    c = sales['sales_type'].values[0]
-    sales['store'] = a
-    sales['sku'] = b
+    
+    sales['store'] = store_info['store'].values[0]
+    sales['sku'] = item_info['sku'].values[0]
 
+    
     forecast_dates = [date.today() + timedelta(days=d) for d in range(1, 15)]
     forecast_dates = [el.strftime("%Y-%m-%d") for el in forecast_dates]
     forecast_dates = pd.DataFrame(forecast_dates, columns=['date'])
-    forecast_dates['store'] = a
-    forecast_dates['sku'] = b
-    forecast_dates['pr_sales_type_id'] = int(c)
+    forecast_dates['store'] = store_info['store'].values[0]
+    forecast_dates['sku'] = item_info['sku'].values[0]
+    forecast_dates['pr_sales_type_id'] = int(sales['sales_type'].values[0])
     forecast_dates['date'] = pd.to_datetime(forecast_dates['date'])
     forecast_dates['dayofweek'] = forecast_dates['date'].dt.dayofweek
 
